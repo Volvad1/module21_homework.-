@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Запрос изображений</title>
+</head>
+<body>
+  <label for="pageNumberInput">Номер страницы:</label>
+  <input type="text" id="pageNumberInput" placeholder="Введите число от 1 до 10">
+  
+  <label for="limitInput">Лимит:</label>
+  <input type="text" id="limitInput" placeholder="Введите число от 1 до 10">
+  
+  <button onclick="makeRequest()">Запрос</button>
+  
+  <div id="result"></div>
+
+  <script>
+    function makeRequest() {
+      const pageNumber = parseInt(document.getElementById('pageNumberInput').value, 10);
+      const limit = parseInt(document.getElementById('limitInput').value, 10);
+      const resultElement = document.getElementById('result');
+
+      const isPageNumberValid = !isNaN(pageNumber) && pageNumber >= 1 && pageNumber <= 10;
+      const isLimitValid = !isNaN(limit) && limit >= 1 && limit <= 10;
+
+      if (!isPageNumberValid && !isLimitValid) {
+        resultElement.textContent = 'Номер страницы и лимит вне диапазона от 1 до 10';
+        return;
+      }
+
+      if (!isPageNumberValid) {
+        resultElement.textContent = 'Номер страницы вне диапазона от 1 до 10';
+        return;
+      }
+
+      if (!isLimitValid) {
+        resultElement.textContent = 'Лимит вне диапазона от 1 до 10';
+        return;
+      }
+
+      const url = `https://picsum.photos/v2/list?page=${pageNumber}&limit=${limit}`;
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Ошибка при запросе изображений');
+          }
+          return response.json();
+        })
+        .then(data => {
+          resultElement.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+          localStorage.setItem('lastRequestData', JSON.stringify(data));
+        })
+        .catch(error => {
+          resultElement.textContent = `Произошла ошибка: ${error.message}`;
+        });
+    }
+
+    window.onload = function() {
+      const lastRequestData = localStorage.getItem('lastRequestData');
+      const resultElement = document.getElementById('result');
+
+      if (lastRequestData) {
+        const data = JSON.parse(lastRequestData);
+        resultElement.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+      }
+    }
+  </script>
+</body>
+</html>

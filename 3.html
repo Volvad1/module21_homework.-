@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Проверка посещения</title>
+</head>
+<body>
+
+<script>
+  
+  const isFirstVisit = !localStorage.getItem('userName');
+
+  if (isFirstVisit) {
+    
+    const userName = prompt('Добро пожаловать! Назовите, пожалуйста, ваше имя');
+
+    
+    if (userName) {
+      const currentDate = new Date();
+      localStorage.setItem('userName', userName);
+      localStorage.setItem('lastVisit', currentDate.toString());
+    }
+  } else {
+    
+    const userName = localStorage.getItem('userName');
+    const lastVisitDate = new Date(localStorage.getItem('lastVisit'));
+
+    const formattedLastVisit = lastVisitDate.toLocaleString('ru-RU', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    });
+
+    alert(`Добрый день, ${userName}! Давно не виделись. В последний раз вы были у нас ${formattedLastVisit}`);
+
+    
+    const currentDate = new Date();
+    localStorage.setItem('lastVisit', currentDate.toString());
+  }
+</script>
+
+</body>
+</html>

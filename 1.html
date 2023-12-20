@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XML to JS Object</title>
+</head>
+<body>
+
+<script>
+  const xmlString = `
+<list>
+  <student>
+    <name lang="en">
+      <first>Ivan</first>
+      <second>Ivanov</second>
+    </name>
+    <age>35</age>
+    <prof>teacher</prof>
+  </student>
+  <student>
+    <name lang="ru">
+      <first>Петр</first>
+      <second>Петров</second>
+    </name>
+    <age>58</age>
+    <prof>driver</prof>
+  </student>
+</list>
+`;
+
+const parser = new DOMParser();
+const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+
+const result = { list: [] };
+
+const studentNodes = xmlDoc.getElementsByTagName('student');
+
+for (let i = 0; i < studentNodes.length; i++) {
+  const studentNode = studentNodes[i];
+  const nameNode = studentNode.querySelector('name');
+  const lang = nameNode.getAttribute('lang');
+  const firstName = nameNode.querySelector('first').textContent;
+  const secondName = nameNode.querySelector('second').textContent;
+  const age = parseInt(studentNode.querySelector('age').textContent);
+  const prof = studentNode.querySelector('prof').textContent;
+
+  result.list.push({
+    name: `${firstName} ${secondName}`,
+    age,
+    prof,
+    lang,
+  });
+}
+
+console.log(result);
+</script>
+
+</body>
+</html>
